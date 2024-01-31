@@ -1,0 +1,31 @@
+[
+  {
+    "Name": "Person",
+    "Type": "component",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": {
+      "Name": {
+        "Name": "Name",
+        "Type": "text",
+        "IsArray": false,
+        "Description": "",
+        "DefaultValue": null,
+        "OptionValues": {},
+        "ComponentVars": {}
+      },
+      "Age": {
+        "Name": "Age",
+        "Type": "number",
+        "IsArray": false,
+        "Description": "",
+        "DefaultValue": null,
+        "OptionValues": {},
+        "ComponentVars": {}
+      }
+    },
+    "Value": null,
+    "DefaultValue": null
+  }
+]

@@ -1,0 +1,9 @@
+$Person: component {
+    $Name: text
+    $Age: number
+}
+
+---
+
+Person:
+{{ .Person }}

@@ -16,7 +16,7 @@ type Variable struct {
 
 	OptionValues map[string]string // only used when type is "select"
 
-	ComponentVars []Variable
+	ComponentVars map[string]Variable
 
 	Value        any // only set when parsed
 	DefaultValue any
