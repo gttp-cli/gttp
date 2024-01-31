@@ -1,0 +1,7 @@
+$BasicNumber: number
+$NumberWithDefault: number = 1337
+
+---
+
+Basic Number: {{ .BasicNumber }}
+Number with default: {{ .NumberWithDefault }}

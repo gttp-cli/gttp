@@ -1,0 +1,7 @@
+$BasicBoolean: boolean
+$BooleanWithDefault: boolean = true
+
+---
+
+Basic boolean: {{ .BasicBoolean }}
+Boolean with default: {{ .BooleanWithDefault }}

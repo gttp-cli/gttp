@@ -1,0 +1,22 @@
+$BasicSelect: select {
+    Option 1
+    Option 2
+    Option 3
+}
+
+$SelectWithCustomValue: select {
+    Option 1
+        This is the custom value
+        for option 1.
+    Option 2
+        This is the custom value
+        for option 2.
+    Option 3
+        This is the custom value
+        for option 3.
+}
+
+---
+
+Basic select: $BasicSelect
+Select with custom value: $SelectWithCustomValue

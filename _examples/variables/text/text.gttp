@@ -1,0 +1,13 @@
+$BasicText: text
+$TextWithDefault: text = Hello, World
+
+$TextWithMultilineDefault: text {
+    Hello
+    World
+}
+
+---
+
+Basic Text: {{ .BasicText }}
+Text with default: {{ .TextWithDefault }}
+Text with multiline default: {{ .TextWithMultilineDefault }}
