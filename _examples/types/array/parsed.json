@@ -1,8 +1,8 @@
 [
   {
-    "Name": "BasicBoolean",
-    "Type": "boolean",
-    "IsArray": false,
+    "Name": "TextArray",
+    "Type": "text",
+    "IsArray": true,
     "Description": "",
     "OptionValues": {},
     "ComponentVars": {},
@@ -10,13 +10,13 @@
     "DefaultValue": null
   },
   {
-    "Name": "BooleanWithDefault",
-    "Type": "boolean",
-    "IsArray": false,
+    "Name": "NumberArray",
+    "Type": "number",
+    "IsArray": true,
     "Description": "",
     "OptionValues": {},
     "ComponentVars": {},
     "Value": null,
-    "DefaultValue": true
+    "DefaultValue": null
   }
 ]

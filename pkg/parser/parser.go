@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"text/template"
 
@@ -27,7 +28,8 @@ func ParseVariables(template string) ([]Variable, error) {
 	lines := strings.Split(template, "\n")
 
 	var currentVar *Variable
-	var inSelectOptions, inComponent, inMultilineDefault bool
+	var componentStack []*Variable
+	var inSelectOptions, inMultilineDefault bool
 	var currentOption string
 	var multilineDefaultValue strings.Builder
 
@@ -38,6 +40,10 @@ func ParseVariables(template string) ([]Variable, error) {
 			if inMultilineDefault && currentVar != nil {
 				currentVar.DefaultValue = multilineDefaultValue.String()
 				multilineDefaultValue.Reset()
+				inMultilineDefault = false
+			}
+
+			if currentVar != nil {
 				variables = append(variables, *currentVar)
 				currentVar = nil
 			}
@@ -105,62 +111,83 @@ func ParseVariables(template string) ([]Variable, error) {
 				}
 			}
 
-			currentVar = &Variable{
-				Name:         varName,
-				Type:         varType,
-				IsArray:      isArray,
-				Description:  varDesc,
-				DefaultValue: defaultValue,
-				OptionValues: map[string]string{},
+			newVar := Variable{
+				Name:          varName,
+				Type:          varType,
+				IsArray:       isArray,
+				Description:   varDesc,
+				DefaultValue:  defaultValue,
+				OptionValues:  map[string]string{},
+				ComponentVars: map[string]Variable{},
 			}
 
 			if varType == "select" {
 				inSelectOptions = true
+				currentVar = &newVar
 			} else if varType == "component" {
-				inComponent = true
-			} else {
-				variables = append(variables, *currentVar)
-				currentVar = nil
-			}
-		} else if currentVar != nil {
-			if inSelectOptions {
-				if trimmedLine == "{" {
-					continue
-				} else if trimmedLine == "}" {
-					inSelectOptions = false
-					variables = append(variables, *currentVar)
-					for k, v := range currentVar.OptionValues {
-						currentVar.OptionValues[k] = strings.TrimSpace(v)
-					}
-					currentVar = nil
-				} else if strings.HasPrefix(line, "        ") {
-					// This is an option value for the last option
-					optionValue := strings.TrimSpace(strings.TrimPrefix(line, "    "))
-					currentVar.OptionValues[currentOption] += optionValue + "\n"
+				if currentVar != nil && currentVar.Type == "component" {
+					// Nest this component inside the current component
+					currentVar.ComponentVars[varName] = newVar
+					fmt.Fprintln(os.Stderr, "Nested component")
+					componentStack = append(componentStack, currentVar)
 				} else {
-					// This is a new option
-					currentOption = trimmedLine
-					// Initialize the option with an empty value, which can be overwritten by an indented line
+					// This is a top-level component
+					fmt.Fprintln(os.Stderr, "Top-level component")
+					variables = append(variables, newVar)
+				}
+				currentVar = &newVar
+			} else {
+				if currentVar != nil && currentVar.Type == "component" {
+					// Add this variable as a nested variable inside the current component
+					fmt.Fprintln(os.Stderr, "Nested component2", newVar.Name)
+					currentVar.ComponentVars[varName] = newVar
+				} else {
+					// This is a top-level variable
+					fmt.Fprintln(os.Stderr, "Top-level component2")
+					variables = append(variables, newVar)
+				}
+			}
+		} else if inSelectOptions {
+			if trimmedLine == "{" {
+				continue
+			} else if trimmedLine == "}" {
+				inSelectOptions = false
+				variables = append(variables, *currentVar)
+				for k, v := range currentVar.OptionValues {
+					currentVar.OptionValues[k] = strings.TrimSpace(v)
+				}
+				currentVar = nil
+			} else if strings.HasPrefix(line, "        ") {
+				optionValue := strings.TrimSpace(strings.TrimPrefix(line, "    "))
+				if currentVar != nil {
+					currentVar.OptionValues[currentOption] += optionValue + "\n"
+				}
+			} else {
+				currentOption = trimmedLine
+				if currentVar != nil {
 					currentVar.OptionValues[currentOption] = ""
 				}
-			} else if inComponent {
-				// ... existing component handling ...
-			} else if inMultilineDefault {
-				if trimmedLine == "}" {
-					inMultilineDefault = false
-					currentVar.DefaultValue = multilineDefaultValue.String()
-					multilineDefaultValue.Reset()
-					variables = append(variables, *currentVar)
-					currentVar = nil
-				} else {
-					multilineDefaultValue.WriteString(strings.TrimPrefix(line, "    ") + "\n")
-				}
 			}
+		} else if inMultilineDefault {
+			if trimmedLine == "}" {
+				inMultilineDefault = false
+				if currentVar != nil {
+					currentVar.DefaultValue = strings.TrimSpace(multilineDefaultValue.String())
+					multilineDefaultValue.Reset()
+				}
+			} else {
+				multilineDefaultValue.WriteString(strings.TrimPrefix(line, "    ") + "\n")
+			}
+		} else if trimmedLine == "}" && len(componentStack) > 0 {
+			// End of a component definition
+			currentVar = componentStack[len(componentStack)-1] // Pop from stack
+			componentStack = componentStack[:len(componentStack)-1]
 		}
 	}
 
 	return variables, nil
 }
+
 func ParseTemplate(template string) (string, error) {
 	template = strings.ReplaceAll(template, "\r\n", "\n")
 	templateParts := strings.SplitN(template, "\n---\n", 2)

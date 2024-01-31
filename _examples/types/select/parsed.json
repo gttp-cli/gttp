@@ -9,7 +9,7 @@
       "Option 2": "",
       "Option 3": ""
     },
-    "ComponentVars": null,
+    "ComponentVars": {},
     "Value": null,
     "DefaultValue": null
   },
@@ -23,7 +23,7 @@
       "Option 2": "This is the custom value\nfor option 2.",
       "Option 3": "This is the custom value\nfor option 3."
     },
-    "ComponentVars": null,
+    "ComponentVars": {},
     "Value": null,
     "DefaultValue": null
   }

@@ -5,7 +5,7 @@
     "IsArray": false,
     "Description": "",
     "OptionValues": {},
-    "ComponentVars": null,
+    "ComponentVars": {},
     "Value": null,
     "DefaultValue": null
   },
@@ -15,7 +15,7 @@
     "IsArray": false,
     "Description": "",
     "OptionValues": {},
-    "ComponentVars": null,
+    "ComponentVars": {},
     "Value": null,
     "DefaultValue": 1337
   }

@@ -3,7 +3,13 @@ $Person: component {
     $Age: number
 }
 
+$Person1: Person
+$BasicText: text
+
 ---
 
 Person:
-{{ .Person }}
+{{ .Person1 }}
+
+BasicText:
+{{ .BasicText }}

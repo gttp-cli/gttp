@@ -5,7 +5,7 @@
     "IsArray": false,
     "Description": "",
     "OptionValues": {},
-    "ComponentVars": null,
+    "ComponentVars": {},
     "Value": null,
     "DefaultValue": null
   },
@@ -15,7 +15,7 @@
     "IsArray": false,
     "Description": "",
     "OptionValues": {},
-    "ComponentVars": null,
+    "ComponentVars": {},
     "Value": null,
     "DefaultValue": "Hello, World"
   },
@@ -27,6 +27,6 @@
     "OptionValues": {},
     "ComponentVars": null,
     "Value": null,
-    "DefaultValue": "Hello\r\nWorld\r\n"
+    "DefaultValue": "Hello\r\nWorld"
   }
 ]
