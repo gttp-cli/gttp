@@ -119,11 +119,14 @@ func ParseVariables(template string) ([]Variable, error) {
 				} else if trimmedLine == "}" {
 					inSelectOptions = false
 					variables = append(variables, *currentVar)
+					for k, v := range currentVar.OptionValues {
+						currentVar.OptionValues[k] = strings.TrimSpace(v)
+					}
 					currentVar = nil
-				} else if strings.HasPrefix(line, "    ") {
+				} else if strings.HasPrefix(line, "        ") {
 					// This is an option value for the last option
 					optionValue := strings.TrimSpace(strings.TrimPrefix(line, "    "))
-					currentVar.OptionValues[currentOption] = optionValue
+					currentVar.OptionValues[currentOption] += optionValue + "\n"
 				} else {
 					// This is a new option
 					currentOption = trimmedLine
