@@ -1,0 +1,144 @@
+// Simple variable with type
+$Text: text
+
+// Simple text array variable
+// This asks for a text and after that, if he would like to add another text
+// Loops until the user says no
+// Arrays work with all types
+$TextArray[]: text
+
+// Variable with default value
+$TextWithDefault: text = "Hello, World!"
+
+// Multiline default value
+$MultilineText: text = """
+Hello,
+World!
+"""
+
+// Number variable
+$Number: number
+
+// Number variable with default value
+$NumberWithDefault: number = 18
+
+// Boolean variable
+$Boolean: boolean
+
+// Select variable
+$Select: select {
+    Option 1
+    Option 2
+    Option 3
+}
+
+// Select variable with default value
+$SelectWithDefault: select = "Option 2" {
+    Option 1
+    Option 2
+    Option 3
+}
+
+// Select variable with different values
+$SelectWithDifferentValues: select {
+    Option 1 = "Option 1 Value"
+    Option 2 = "Option 2 Value"
+    Option 3 = "Option 3 Value"
+}
+
+// Select variable with different values and default value
+$SelectWithDifferentValuesAndDefault: select = "Option 2" {
+    Option 1
+        "Option 1 Value"
+    Option 2
+        "Option 2 Value"
+    Option 3
+        "Option 3 Value"
+}
+
+// Select variable with different multiline values and default value
+$SelectWithDifferentMultilineValuesAndDefault: select = "Option 2" {
+    Option 1
+        """
+        Option
+        1
+        Value
+        """
+    Option 2
+        """
+        Option
+        2
+        Value
+        """
+    Option 3
+        """
+        Option
+        3
+        Value
+        """
+}
+
+// Component variables specify a component that consists of multiple variables
+// Component variables will not ask the user for input, but can be used as types for other variables
+$ComponentVariable: component {
+    $Text: text
+    $Number: number
+    $Boolean: boolean
+}
+
+$Component1: ComponentVariable // will ask for Text, Number and Boolean
+
+$AnotherComponent: component {
+    $Text: text = "Default value"
+    $Number: number
+    $Boolean: boolean
+    $Select: select {
+        Option 1
+        Option 2
+        Option 3
+    }
+}
+
+$Component2: AnotherComponent
+
+$MultiComponents[]: AnotherComponent
+
+---
+
+Text: {{ .Text }}
+TextArray:
+{{ range $TextArray }}
+    - {{ . }}
+{{ end }}
+
+TextWithDefault: {{ .TextWithDefault }}
+
+Number: {{ .Number }}
+NumberWithDefault: {{ .NumberWithDefault }}
+
+Boolean: {{ .Boolean }}
+
+Select: {{ .Select }}
+SelectWithDefault: {{ .SelectWithDefault }}
+SelectWithDifferentValues: {{ .SelectWithDifferentValues }}
+SelectWithDifferentValuesAndDefault: {{ .SelectWithDifferentValuesAndDefault }}
+SelectWithDifferentMultilineValuesAndDefault: {{ .SelectWithDifferentMultilineValuesAndDefault }}
+
+Component1:
+    Text: {{ .Component1.Text }}
+    Number: {{ .Component1.Number }}
+    Boolean: {{ .Component1.Boolean }}
+
+Component2:
+    Text: {{ .Component2.Text }}
+    Number: {{ .Component2.Number }}
+    Boolean: {{ .Component2.Boolean }}
+    Select: {{ .Component2.Select }}
+
+MultiComponents:
+{{ range $MultiComponents }}
+    Text: {{ .Text }}
+    Number: {{ .Number }}
+    Boolean: {{ .Boolean }}
+    Select: {{ .Select }}
+{{ end }}
