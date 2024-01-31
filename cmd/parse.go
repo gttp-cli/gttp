@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gttp-cli/gttp/pkg/parser"
 	"github.com/gttp-cli/gttp/pkg/utils"
@@ -8,16 +9,18 @@ import (
 )
 
 func init() {
+	rootCmd.AddCommand(parseCmd)
+
 	// URL flag
-	rootCmd.Flags().StringP("url", "u", "", "Fetch template from URL")
+	parseCmd.Flags().StringP("url", "u", "", "Fetch template from URL")
 
 	// File flag
-	rootCmd.Flags().StringP("file", "f", "", "Fetch template from file")
+	parseCmd.Flags().StringP("file", "f", "", "Fetch template from file")
 }
 
-var rootCmd = &cobra.Command{
-	Use:   "gttp",
-	Short: `Go Text Template Parser`,
+var parseCmd = &cobra.Command{
+	Use:   "parse",
+	Short: `Parse template and print AST`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url, _ := cmd.Flags().GetString("url")
 		file, _ := cmd.Flags().GetString("file")
@@ -45,17 +48,18 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := parser.ParseTemplate(template)
+		variables, err := parser.ParseVariables(template)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(result)
+		// Convert variables to JSON
+		json, err := json.MarshalIndent(variables, "", "  ")
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(json))
 
 		return nil
 	},
-}
-
-func Execute() error {
-	return rootCmd.Execute()
 }

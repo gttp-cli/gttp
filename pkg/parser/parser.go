@@ -1,19 +1,25 @@
 package parser
 
 import (
-	"atomicgo.dev/f"
 	"fmt"
-	"github.com/pterm/pterm"
 	"strings"
 	"text/template"
+
+	"github.com/pterm/pterm"
 )
 
 type Variable struct {
 	Name        string
-	Description string
 	Type        string
-	Options     []string // only used when type is "select"
-	Value       any      // only set when parsed
+	IsArray     bool
+	Description string
+
+	OptionValues map[string]string // only used when type is "select"
+
+	ComponentVars []Variable
+
+	Value        any // only set when parsed
+	DefaultValue any
 }
 
 func ParseVariables(template string) ([]Variable, error) {
@@ -21,54 +27,127 @@ func ParseVariables(template string) ([]Variable, error) {
 	lines := strings.Split(template, "\n")
 
 	var currentVar *Variable
+	var inSelectOptions, inComponent, inMultilineDefault bool
+	var currentOption string
+	var multilineDefaultValue strings.Builder
+
 	for _, line := range lines {
-		// Stop parsing if we reach the delimiter
-		if strings.TrimSpace(line) == "---" {
+		trimmedLine := strings.TrimSpace(line)
+
+		if trimmedLine == "---" {
+			if inMultilineDefault && currentVar != nil {
+				currentVar.DefaultValue = multilineDefaultValue.String()
+				multilineDefaultValue.Reset()
+				variables = append(variables, *currentVar)
+				currentVar = nil
+			}
 			break
 		}
 
-		// Skip empty lines
-		if strings.TrimSpace(line) == "" {
+		if trimmedLine == "" {
 			continue
 		}
 
-		// Check for variable definition
-		if strings.HasPrefix(line, "$") {
-			// Extract variable name, type, and description
-			parts := strings.SplitN(line, ":", 2)
-			if len(parts) != 2 {
-				continue // Invalid format, skip this line
+		if strings.HasPrefix(trimmedLine, "$") {
+			if inMultilineDefault && currentVar != nil {
+				currentVar.DefaultValue = multilineDefaultValue.String()
+				multilineDefaultValue.Reset()
+				inMultilineDefault = false
 			}
 
-			varDescParts := strings.SplitN(parts[1], "//", 2)
-			varType := strings.TrimSpace(varDescParts[0])
+			if inSelectOptions && currentVar != nil {
+				inSelectOptions = false
+				variables = append(variables, *currentVar)
+				currentVar = nil
+			}
+
+			parts := strings.SplitN(trimmedLine, ":", 2)
+			if len(parts) != 2 {
+				continue
+			}
+
+			varName := strings.TrimSuffix(strings.TrimSpace(parts[0][1:]), "[]")
+			varTypeDesc := strings.SplitN(parts[1], "//", 2)
+			varType := strings.TrimSpace(varTypeDesc[0])
 			varDesc := ""
-			if len(varDescParts) == 2 {
-				varDesc = strings.TrimSpace(varDescParts[1])
+			if len(varTypeDesc) == 2 {
+				varDesc = strings.TrimSpace(varTypeDesc[1])
+			}
+
+			isArray := strings.HasSuffix(strings.TrimSpace(parts[0]), "[]")
+			var defaultValue any
+
+			if defaultValParts := strings.SplitN(varType, "=", 2); len(defaultValParts) == 2 {
+				varType = strings.TrimSpace(defaultValParts[0])
+				defaultValue = strings.TrimSpace(defaultValParts[1])
+			} else if strings.HasSuffix(varType, "{") {
+				varType = strings.TrimSuffix(varType, " {")
+				if varType == "text" {
+					inMultilineDefault = true
+					currentVar = &Variable{
+						Name:         varName,
+						Type:         varType,
+						IsArray:      isArray,
+						Description:  varDesc,
+						OptionValues: map[string]string{},
+					}
+					continue
+				}
 			}
 
 			currentVar = &Variable{
-				Name:        strings.TrimSpace(parts[0][1:]), // remove '$' from start
-				Type:        varType,
-				Description: varDesc,
-				Options:     []string{},
+				Name:         varName,
+				Type:         varType,
+				IsArray:      isArray,
+				Description:  varDesc,
+				DefaultValue: defaultValue,
+				OptionValues: map[string]string{},
 			}
-			variables = append(variables, *currentVar)
-		} else if currentVar != nil && (currentVar.Type == "select" || currentVar.Type == "multiselect") {
-			// Parse select or multiselect options
-			option := strings.TrimSpace(line)
-			if strings.HasPrefix(option, "-") {
-				option = strings.TrimSpace(option[1:])
-				currentVar.Options = append(currentVar.Options, option)
-				// Update the last variable in the slice with new options
-				variables[len(variables)-1] = *currentVar
+
+			if varType == "select" {
+				inSelectOptions = true
+			} else if varType == "component" {
+				inComponent = true
+			} else {
+				variables = append(variables, *currentVar)
+				currentVar = nil
+			}
+		} else if currentVar != nil {
+			if inSelectOptions {
+				if trimmedLine == "{" {
+					continue
+				} else if trimmedLine == "}" {
+					inSelectOptions = false
+					variables = append(variables, *currentVar)
+					currentVar = nil
+				} else if strings.HasPrefix(line, "    ") {
+					// This is an option value for the last option
+					optionValue := strings.TrimSpace(strings.TrimPrefix(line, "    "))
+					currentVar.OptionValues[currentOption] = optionValue
+				} else {
+					// This is a new option
+					currentOption = trimmedLine
+					// Initialize the option with an empty value, which can be overwritten by an indented line
+					currentVar.OptionValues[currentOption] = ""
+				}
+			} else if inComponent {
+				// ... existing component handling ...
+			} else if inMultilineDefault {
+				if trimmedLine == "}" {
+					inMultilineDefault = false
+					currentVar.DefaultValue = multilineDefaultValue.String()
+					multilineDefaultValue.Reset()
+					variables = append(variables, *currentVar)
+					currentVar = nil
+				} else {
+					multilineDefaultValue.WriteString(strings.TrimPrefix(line, "    ") + "\n")
+				}
 			}
 		}
 	}
 
 	return variables, nil
 }
-
 func ParseTemplate(template string) (string, error) {
 	template = strings.ReplaceAll(template, "\r\n", "\n")
 	templateParts := strings.SplitN(template, "\n---\n", 2)
@@ -84,13 +163,16 @@ func ParseTemplate(template string) (string, error) {
 	}
 
 	// Parse expr-lang syntax
-	parsed, err := f.FormatSafe(templateParts[1], VariablesToMap(variables))
+	//parsed, err := f.FormatSafe(templateParts[1], VariablesToMap(variables))
+	//if err != nil {
+	//	return "", err
+	//}
+
+	// Parse Go text template syntax
+	parsed, err := ParseGoTextTemplate(templateParts[1], VariablesToMap(variables))
 	if err != nil {
 		return "", err
 	}
-
-	// Parse Go text template syntax
-	parsed, err = ParseGoTextTemplate(parsed, VariablesToMap(variables))
 
 	return parsed, nil
 }
@@ -133,9 +215,17 @@ func AskForVariables(variables []Variable) error {
 		case "bool", "boolean":
 			value, err = pterm.DefaultInteractiveConfirm.Show(question)
 		case "select":
-			value, err = pterm.DefaultInteractiveSelect.WithOptions(variable.Options).Show(question)
+			var options []string
+			for option := range variable.OptionValues {
+				options = append(options, option)
+			}
+			value, err = pterm.DefaultInteractiveSelect.WithOptions(options).Show(question)
 		case "multiselect":
-			value, err = pterm.DefaultInteractiveMultiselect.WithOptions(variable.Options).Show(question)
+			var options []string
+			for option := range variable.OptionValues {
+				options = append(options, option)
+			}
+			value, err = pterm.DefaultInteractiveMultiselect.WithOptions(options).Show(question)
 		}
 		if err != nil {
 			return err

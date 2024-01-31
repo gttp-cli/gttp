@@ -7,16 +7,18 @@ $Text: text
 // Arrays work with all types
 $TextArray[]: text
 
-// Variable with default value
-$TextWithDefault: text = "Hello, World!"
+// Variable with default value, defined by `=` in the same line
+$TextWithDefault: text = Hello, World!
 
-// Multiline default value
-$MultilineText: text = """
-Hello,
-World!
-"""
+// Variable with default value, defined by a block (multiline)
+$MultilineText: text {
+    Hello,
+    World!
+}
+// Default value should not have the indentation of the block
 
-// Number variable
+
+// Simple number variable
 $Number: number
 
 // Number variable with default value
@@ -26,56 +28,41 @@ $NumberWithDefault: number = 18
 $Boolean: boolean
 
 // Select variable
+// This asks for a selection of the given options
 $Select: select {
     Option 1
     Option 2
     Option 3
 }
 
-// Select variable with default value
-$SelectWithDefault: select = "Option 2" {
-    Option 1
-    Option 2
-    Option 3
-}
-
 // Select variable with different values
+// The values are used when the user selects the option
+// Values are defined by an indentation of 4 spaces under the option
+// Values can have multiple lines
 $SelectWithDifferentValues: select {
-    Option 1 = "Option 1 Value"
-    Option 2 = "Option 2 Value"
-    Option 3 = "Option 3 Value"
-}
-
-// Select variable with different values and default value
-$SelectWithDifferentValuesAndDefault: select = "Option 2" {
     Option 1
-        "Option 1 Value"
+        Option 1 Value
     Option 2
-        "Option 2 Value"
+        Option 2 Value
     Option 3
-        "Option 3 Value"
+        Option 3 Value
 }
 
-// Select variable with different multiline values and default value
-$SelectWithDifferentMultilineValuesAndDefault: select = "Option 2" {
+// Select variable with different multiline values
+// Example with multiple line values
+$SelectWithDifferentMultilineValues: select {
     Option 1
-        """
         Option
         1
         Value
-        """
     Option 2
-        """
         Option
         2
         Value
-        """
     Option 3
-        """
         Option
         3
         Value
-        """
 }
 
 // Component variables specify a component that consists of multiple variables
@@ -86,10 +73,11 @@ $ComponentVariable: component {
     $Boolean: boolean
 }
 
-$Component1: ComponentVariable // will ask for Text, Number and Boolean
+// will ask for Text, Number and Boolean
+$Component1: ComponentVariable
 
 $AnotherComponent: component {
-    $Text: text = "Default value"
+    $Text: text = Default value
     $Number: number
     $Boolean: boolean
     $Select: select {
