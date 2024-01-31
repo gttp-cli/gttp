@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "BasicNumber",
+    "Type": "number",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": null,
+    "Value": null,
+    "DefaultValue": null
+  },
+  {
+    "Name": "NumberWithDefault",
+    "Type": "number",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": null,
+    "Value": null,
+    "DefaultValue": 1337
+  }
+]

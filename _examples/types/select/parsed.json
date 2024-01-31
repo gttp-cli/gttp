@@ -1,0 +1,30 @@
+[
+  {
+    "Name": "BasicSelect",
+    "Type": "select",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {
+      "Option 1": "",
+      "Option 2": "",
+      "Option 3": ""
+    },
+    "ComponentVars": null,
+    "Value": null,
+    "DefaultValue": null
+  },
+  {
+    "Name": "SelectWithCustomValue",
+    "Type": "select",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {
+      "Option 1": "This is the custom value\nfor option 1.",
+      "Option 2": "This is the custom value\nfor option 2.",
+      "Option 3": "This is the custom value\nfor option 3."
+    },
+    "ComponentVars": null,
+    "Value": null,
+    "DefaultValue": null
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "Name": "BasicText",
+    "Type": "text",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": null,
+    "Value": null,
+    "DefaultValue": null
+  },
+  {
+    "Name": "TextWithDefault",
+    "Type": "text",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": null,
+    "Value": null,
+    "DefaultValue": "Hello, World"
+  },
+  {
+    "Name": "TextWithMultilineDefault",
+    "Type": "text",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": null,
+    "Value": null,
+    "DefaultValue": "Hello\r\nWorld\r\n"
+  }
+]
