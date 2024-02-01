@@ -6,23 +6,25 @@
     "Description": "",
     "OptionValues": {},
     "ComponentVars": {
-      "Name": {
-        "Name": "Name",
-        "Type": "text",
-        "IsArray": false,
-        "Description": "",
-        "DefaultValue": null,
-        "OptionValues": {},
-        "ComponentVars": {}
-      },
       "Age": {
         "Name": "Age",
         "Type": "number",
         "IsArray": false,
         "Description": "",
-        "DefaultValue": null,
         "OptionValues": {},
-        "ComponentVars": {}
+        "ComponentVars": {},
+        "Value": null,
+        "DefaultValue": null
+      },
+      "Name": {
+        "Name": "Name",
+        "Type": "text",
+        "IsArray": false,
+        "Description": "",
+        "OptionValues": {},
+        "ComponentVars": {},
+        "Value": null,
+        "DefaultValue": null
       }
     },
     "Value": null,
