@@ -179,7 +179,11 @@ func ParseVariables(template string) ([]Variable, error) {
 				if currentVar != nil {
 					currentVar.DefaultValue = strings.TrimSpace(multilineDefaultValue.String())
 					multilineDefaultValue.Reset()
-					variables = append(variables, *currentVar)
+					if inComponent {
+						componentStack[len(componentStack)-1].ComponentVars[currentVar.Name] = *currentVar
+					} else {
+						variables = append(variables, *currentVar)
+					}
 				}
 			} else {
 				multilineDefaultValue.WriteString(strings.TrimPrefix(line, "    ") + "\n")
