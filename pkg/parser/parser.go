@@ -59,6 +59,15 @@ func ParseVariables(template string) ([]Variable, error) {
 			continue
 		}
 
+		if strings.HasPrefix(trimmedLine, "# ") {
+			newVar := Variable{
+				Value: strings.TrimSpace(trimmedLine[2:]),
+				Type:  "section",
+			}
+			variables = append(variables, newVar)
+			continue
+		}
+
 		if strings.HasPrefix(trimmedLine, "$") {
 			if inMultilineDefault && currentVar != nil {
 				currentVar.DefaultValue = multilineDefaultValue.String()
@@ -237,6 +246,10 @@ func VariablesToMap(variables []Variable) map[string]any {
 	variableMap := make(map[string]any)
 
 	for _, variable := range variables {
+		if variable.Name == "" { // could be a section or other metadata
+			continue
+		}
+
 		variableMap[variable.Name] = variable.Value
 	}
 
@@ -245,6 +258,11 @@ func VariablesToMap(variables []Variable) map[string]any {
 
 func AskForVariables(variables []Variable) error {
 	for i, variable := range variables {
+		if variable.Type == "section" {
+			pterm.DefaultSection.Println(variable.Value)
+			continue
+		}
+
 		// Skip variables that already have a value
 		if variable.Value != nil {
 			continue

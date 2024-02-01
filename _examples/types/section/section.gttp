@@ -1,0 +1,15 @@
+// Lines starting with "# " are considered to be sections.
+// Sections are used to group fields together and will be displayed to the user.
+
+# Personal Information
+$Name: text
+$Age: number
+
+# Address
+$Country: text
+$City: text
+
+---
+
+Hello {{ .Name }} from {{ .City }}, {{ .Country }}!
+{{ .Age }} is a good age to be.

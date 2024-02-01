@@ -1,0 +1,62 @@
+[
+  {
+    "Name": "",
+    "Type": "section",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": null,
+    "ComponentVars": null,
+    "Value": "Personal Information",
+    "DefaultValue": null
+  },
+  {
+    "Name": "Name",
+    "Type": "text",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": {},
+    "Value": null,
+    "DefaultValue": null
+  },
+  {
+    "Name": "Age",
+    "Type": "number",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": {},
+    "Value": null,
+    "DefaultValue": null
+  },
+  {
+    "Name": "",
+    "Type": "section",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": null,
+    "ComponentVars": null,
+    "Value": "Address",
+    "DefaultValue": null
+  },
+  {
+    "Name": "Country",
+    "Type": "text",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": {},
+    "Value": null,
+    "DefaultValue": null
+  },
+  {
+    "Name": "City",
+    "Type": "text",
+    "IsArray": false,
+    "Description": "",
+    "OptionValues": {},
+    "ComponentVars": {},
+    "Value": null,
+    "DefaultValue": null
+  }
+]
