@@ -130,18 +130,23 @@ func ParseVariables(template string) ([]Variable, error) {
 				inSelectOptions = true
 				currentVar = &newVar
 			} else if varType == "component" {
-				inComponent = true
-				if len(componentStack) > 0 {
+				if inComponent {
+					// If we are already in a component, add newVar as nested component
 					componentStack[len(componentStack)-1].ComponentVars[varName] = newVar
 				} else {
+					// If we are not in a component, add newVar to variables
 					variables = append(variables, newVar)
 				}
+				// Push newVar onto the stack and set inComponent to true
 				componentStack = append(componentStack, &newVar)
+				inComponent = true
 				currentVar = &newVar
 			} else {
-				if inComponent && len(componentStack) > 0 {
+				if inComponent {
+					// If in a component, add newVar as nested variable
 					componentStack[len(componentStack)-1].ComponentVars[varName] = newVar
 				} else {
+					// If not in a component, add newVar to variables
 					variables = append(variables, newVar)
 				}
 			}
@@ -181,14 +186,13 @@ func ParseVariables(template string) ([]Variable, error) {
 			}
 		} else if trimmedLine == "}" {
 			if inComponent {
-				inComponent = false
+				// Pop the current component off the stack
+				componentStack = componentStack[:len(componentStack)-1]
+				inComponent = len(componentStack) > 0
 				if len(componentStack) > 0 {
 					currentVar = componentStack[len(componentStack)-1]
-					componentStack = componentStack[:len(componentStack)-1]
-					if len(componentStack) == 0 {
-						variables = append(variables, *currentVar)
-						currentVar = nil
-					}
+				} else {
+					currentVar = nil
 				}
 			}
 		}

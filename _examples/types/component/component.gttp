@@ -4,12 +4,16 @@ $Person: component {
 }
 
 $Person1: Person
+$Person2: Person
 $BasicText: text
 
 ---
 
-Person:
+Person1:
 {{ .Person1 }}
+
+Person2:
+{{ .Person2 }}
 
 BasicText:
 {{ .BasicText }}
