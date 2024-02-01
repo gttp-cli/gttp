@@ -9,6 +9,11 @@
       "Option 2": "",
       "Option 3": ""
     },
+    "OptionOrder": [
+      "Option 1",
+      "Option 2",
+      "Option 3"
+    ],
     "ComponentVars": {},
     "Value": null,
     "DefaultValue": null
@@ -23,6 +28,11 @@
       "Option 2": "This is the custom value\nfor option 2.",
       "Option 3": "This is the custom value\nfor option 3."
     },
+    "OptionOrder": [
+      "Option 1",
+      "Option 2",
+      "Option 3"
+    ],
     "ComponentVars": {},
     "Value": null,
     "DefaultValue": null

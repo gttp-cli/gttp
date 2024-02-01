@@ -5,6 +5,7 @@
     "IsArray": false,
     "Description": "",
     "OptionValues": {},
+    "OptionOrder": [],
     "ComponentVars": {},
     "Value": null,
     "DefaultValue": null
@@ -15,6 +16,7 @@
     "IsArray": false,
     "Description": "",
     "OptionValues": {},
+    "OptionOrder": [],
     "ComponentVars": {},
     "Value": null,
     "DefaultValue": true

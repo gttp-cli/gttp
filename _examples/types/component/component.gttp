@@ -10,10 +10,12 @@ $BasicText: text
 ---
 
 Person1:
-{{ .Person1 }}
+{{ .Person1.Name }}
+{{ .Person1.Age }}
 
 Person2:
-{{ .Person2 }}
+{{ .Person2.Name }}
+{{ .Person2.Age }}
 
 BasicText:
 {{ .BasicText }}

@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"atomicgo.dev/f"
 	"fmt"
+	"os"
 	"strings"
 	"text/template"
 
@@ -14,9 +16,11 @@ type Variable struct {
 	IsArray     bool
 	Description string
 
-	OptionValues map[string]string // only used when type is "select"
+	OptionValues map[string]string // only used when type is "select" or "multiselect"
+	OptionOrder  []string          // only used when type is "select" or "multiselect"
 
-	ComponentVars map[string]Variable
+	ComponentVars  map[string]*Variable
+	ComponentOrder *[]string
 
 	Value        any // only set when parsed
 	DefaultValue any
@@ -115,33 +119,37 @@ func ParseVariables(template string) ([]Variable, error) {
 				if varType == "text" {
 					inMultilineDefault = true
 					currentVar = &Variable{
-						Name:         varName,
-						Type:         varType,
-						IsArray:      isArray,
-						Description:  varDesc,
-						OptionValues: map[string]string{},
+						Name:           varName,
+						Type:           varType,
+						IsArray:        isArray,
+						Description:    varDesc,
+						OptionValues:   map[string]string{},
+						OptionOrder:    []string{},
+						ComponentOrder: &[]string{},
 					}
 					continue
 				}
 			}
 
 			newVar := Variable{
-				Name:          varName,
-				Type:          varType,
-				IsArray:       isArray,
-				Description:   varDesc,
-				DefaultValue:  defaultValue,
-				OptionValues:  map[string]string{},
-				ComponentVars: map[string]Variable{},
+				Name:           varName,
+				Type:           varType,
+				IsArray:        isArray,
+				Description:    varDesc,
+				DefaultValue:   defaultValue,
+				OptionValues:   map[string]string{},
+				OptionOrder:    []string{},
+				ComponentVars:  map[string]*Variable{},
+				ComponentOrder: &[]string{},
 			}
 
-			if varType == "select" {
+			if varType == "select" || varType == "multiselect" {
 				inSelectOptions = true
 				currentVar = &newVar
 			} else if varType == "component" {
 				if inComponent {
 					// If we are already in a component, add newVar as nested component
-					componentStack[len(componentStack)-1].ComponentVars[varName] = newVar
+					componentStack[len(componentStack)-1].ComponentVars[varName] = &newVar
 				} else {
 					// If we are not in a component, add newVar to variables
 					variables = append(variables, newVar)
@@ -153,7 +161,9 @@ func ParseVariables(template string) ([]Variable, error) {
 			} else {
 				if inComponent {
 					// If in a component, add newVar as nested variable
-					componentStack[len(componentStack)-1].ComponentVars[varName] = newVar
+					componentStack[len(componentStack)-1].ComponentVars[varName] = &newVar
+					// Add component order
+					*componentStack[len(componentStack)-1].ComponentOrder = append(*componentStack[len(componentStack)-1].ComponentOrder, varName)
 				} else {
 					// If not in a component, add newVar to variables
 					variables = append(variables, newVar)
@@ -180,6 +190,7 @@ func ParseVariables(template string) ([]Variable, error) {
 				currentOption = trimmedLine
 				if currentVar != nil {
 					currentVar.OptionValues[currentOption] = ""
+					currentVar.OptionOrder = append(currentVar.OptionOrder, currentOption)
 				}
 			}
 		} else if inMultilineDefault {
@@ -189,7 +200,7 @@ func ParseVariables(template string) ([]Variable, error) {
 					currentVar.DefaultValue = strings.TrimSpace(multilineDefaultValue.String())
 					multilineDefaultValue.Reset()
 					if inComponent {
-						componentStack[len(componentStack)-1].ComponentVars[currentVar.Name] = *currentVar
+						componentStack[len(componentStack)-1].ComponentVars[currentVar.Name] = currentVar
 					} else {
 						variables = append(variables, *currentVar)
 					}
@@ -222,22 +233,25 @@ func ParseTemplate(template string) (string, error) {
 		return "", fmt.Errorf("failed to parse variables: %w", err)
 	}
 
-	err = AskForVariables(variables)
+	err = AskForVariables(variables, "")
 	if err != nil {
 		return "", err
 	}
 
-	// Parse expr-lang syntax
-	//parsed, err := f.FormatSafe(templateParts[1], VariablesToMap(variables))
-	//if err != nil {
-	//	return "", err
-	//}
+	//Parse expr-lang syntax
+	varMap := VariablesToMap(variables)
+	parsed, err := f.FormatSafe(templateParts[1], varMap)
+	if err != nil {
+		return "", err
+	}
 
 	// Parse Go text template syntax
-	parsed, err := ParseGoTextTemplate(templateParts[1], VariablesToMap(variables))
+	parsed, err = ParseGoTextTemplate(parsed, varMap)
 	if err != nil {
 		return "", err
 	}
+
+	fmt.Fprintf(os.Stderr, "Variables: %#v\n", varMap)
 
 	return parsed, nil
 }
@@ -250,13 +264,20 @@ func VariablesToMap(variables []Variable) map[string]any {
 			continue
 		}
 
+		if variable.Value == nil {
+			continue
+		}
+
+		// Check if value is a variable slice using reflection
+		fmt.Fprintf(os.Stderr, "Variable: %#v\n\n\n", variable)
+
 		variableMap[variable.Name] = variable.Value
 	}
 
 	return variableMap
 }
 
-func AskForVariables(variables []Variable) error {
+func AskForVariables(variables []Variable, path string) error {
 	for i, variable := range variables {
 		if variable.Type == "section" {
 			pterm.DefaultSection.Println(variable.Value)
@@ -270,36 +291,70 @@ func AskForVariables(variables []Variable) error {
 
 		var question string
 
-		if variable.Description != "" {
-			question = variable.Description
-		} else {
-			question = variable.Name
+		if path != "" {
+			question += path + "."
 		}
 
+		if variable.Description != "" {
+			question += variable.Description
+		} else {
+			question += variable.Name
+		}
 		question += fmt.Sprintf(pterm.Gray(" (%s)"), variable.Type)
 
 		// Ask for variable value
 		var value any
 		var err error
 		switch variable.Type {
-		case "text", "string":
+		case "text":
 			value, err = pterm.DefaultInteractiveTextInput.Show(question)
-		case "number", "int", "integer":
+		case "number":
 			value, err = pterm.DefaultInteractiveTextInput.Show(question)
-		case "bool", "boolean":
+		case "boolean":
 			value, err = pterm.DefaultInteractiveConfirm.Show(question)
 		case "select":
 			var options []string
-			for option := range variable.OptionValues {
+			for _, option := range variable.OptionOrder {
 				options = append(options, option)
 			}
 			value, err = pterm.DefaultInteractiveSelect.WithOptions(options).Show(question)
 		case "multiselect":
 			var options []string
-			for option := range variable.OptionValues {
+			for _, option := range variable.OptionOrder {
 				options = append(options, option)
 			}
 			value, err = pterm.DefaultInteractiveMultiselect.WithOptions(options).Show(question)
+		case "component":
+			// Components do not directly ask the user, only when they are used
+		default:
+			// Check if first letter is uppercase, if so, it is a component
+			isComponent := variable.Type[0] >= 'A' && variable.Type[0] <= 'Z'
+			if !isComponent {
+				return fmt.Errorf("unknown variable type: %s", variable.Type)
+			}
+
+			fmt.Fprintf(os.Stderr, "Component: %s\n", variable.Type)
+
+			// Find component by name
+			var component *Variable
+			for _, v := range variables {
+				if v.Name == variable.Type {
+					component = &v
+					break
+				}
+			}
+
+			// Ask for component variables
+			var componentVariables []Variable
+			for _, componentName := range *component.ComponentOrder {
+				componentVariables = append(componentVariables, *component.ComponentVars[componentName])
+			}
+			err = AskForVariables(componentVariables, variable.Name)
+			if err != nil {
+				return err
+			}
+
+			value = componentVariables
 		}
 		if err != nil {
 			return err
