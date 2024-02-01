@@ -90,11 +90,29 @@ func ParseVariables(template string) ([]Variable, error) {
 
 			if defaultValParts := strings.SplitN(varType, "=", 2); len(defaultValParts) == 2 {
 				varType = strings.TrimSpace(defaultValParts[0])
-				defaultValue = strings.TrimSpace(defaultValParts[1])
+				if varType == "boolean" {
+					var b bool
+					fmt.Sscan(defaultValParts[1], &b)
+					defaultValue = b
+				} else if varType == "number" {
+					var n int
+					fmt.Sscan(defaultValParts[1], &n)
+					defaultValue = n
+				} else {
+					defaultValue = strings.TrimSpace(defaultValParts[1])
+				}
 			} else if strings.HasSuffix(varType, "{") {
 				varType = strings.TrimSuffix(varType, " {")
 				if varType == "text" {
 					inMultilineDefault = true
+					currentVar = &Variable{
+						Name:         varName,
+						Type:         varType,
+						IsArray:      isArray,
+						Description:  varDesc,
+						OptionValues: map[string]string{},
+					}
+					continue
 				}
 			}
 
@@ -156,6 +174,7 @@ func ParseVariables(template string) ([]Variable, error) {
 				if currentVar != nil {
 					currentVar.DefaultValue = strings.TrimSpace(multilineDefaultValue.String())
 					multilineDefaultValue.Reset()
+					variables = append(variables, *currentVar)
 				}
 			} else {
 				multilineDefaultValue.WriteString(strings.TrimPrefix(line, "    ") + "\n")
