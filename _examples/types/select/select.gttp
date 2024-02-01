@@ -18,5 +18,5 @@ $SelectWithCustomValue: select {
 
 ---
 
-Basic select: $BasicSelect
-Select with custom value: $SelectWithCustomValue
+Basic select: {{ .BasicSelect }}
+Select with custom value: {{ .SelectWithCustomValue }}

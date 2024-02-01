@@ -32,7 +32,10 @@
         "DefaultValue": null
       }
     },
-    "ComponentOrder": [],
+    "ComponentOrder": [
+      "Name",
+      "Age"
+    ],
     "Value": null,
     "DefaultValue": null
   },

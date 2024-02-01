@@ -7,6 +7,7 @@
     "OptionValues": {},
     "OptionOrder": [],
     "ComponentVars": {},
+    "ComponentOrder": [],
     "Value": null,
     "DefaultValue": null
   },
@@ -18,6 +19,7 @@
     "OptionValues": {},
     "OptionOrder": [],
     "ComponentVars": {},
+    "ComponentOrder": [],
     "Value": null,
     "DefaultValue": 1337
   }

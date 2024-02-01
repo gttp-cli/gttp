@@ -4,6 +4,7 @@ import (
 	"atomicgo.dev/f"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 	"text/template"
 
@@ -19,7 +20,7 @@ type Variable struct {
 	OptionValues map[string]string // only used when type is "select" or "multiselect"
 	OptionOrder  []string          // only used when type is "select" or "multiselect"
 
-	ComponentVars  map[string]*Variable
+	ComponentVars  map[string]Variable
 	ComponentOrder *[]string
 
 	Value        any // only set when parsed
@@ -139,7 +140,7 @@ func ParseVariables(template string) ([]Variable, error) {
 				DefaultValue:   defaultValue,
 				OptionValues:   map[string]string{},
 				OptionOrder:    []string{},
-				ComponentVars:  map[string]*Variable{},
+				ComponentVars:  map[string]Variable{},
 				ComponentOrder: &[]string{},
 			}
 
@@ -149,7 +150,7 @@ func ParseVariables(template string) ([]Variable, error) {
 			} else if varType == "component" {
 				if inComponent {
 					// If we are already in a component, add newVar as nested component
-					componentStack[len(componentStack)-1].ComponentVars[varName] = &newVar
+					componentStack[len(componentStack)-1].ComponentVars[varName] = newVar
 				} else {
 					// If we are not in a component, add newVar to variables
 					variables = append(variables, newVar)
@@ -161,7 +162,7 @@ func ParseVariables(template string) ([]Variable, error) {
 			} else {
 				if inComponent {
 					// If in a component, add newVar as nested variable
-					componentStack[len(componentStack)-1].ComponentVars[varName] = &newVar
+					componentStack[len(componentStack)-1].ComponentVars[varName] = newVar
 					// Add component order
 					*componentStack[len(componentStack)-1].ComponentOrder = append(*componentStack[len(componentStack)-1].ComponentOrder, varName)
 				} else {
@@ -200,7 +201,7 @@ func ParseVariables(template string) ([]Variable, error) {
 					currentVar.DefaultValue = strings.TrimSpace(multilineDefaultValue.String())
 					multilineDefaultValue.Reset()
 					if inComponent {
-						componentStack[len(componentStack)-1].ComponentVars[currentVar.Name] = currentVar
+						componentStack[len(componentStack)-1].ComponentVars[currentVar.Name] = *currentVar
 					} else {
 						variables = append(variables, *currentVar)
 					}
@@ -240,6 +241,7 @@ func ParseTemplate(template string) (string, error) {
 
 	//Parse expr-lang syntax
 	varMap := VariablesToMap(variables)
+
 	parsed, err := f.FormatSafe(templateParts[1], varMap)
 	if err != nil {
 		return "", err
@@ -251,8 +253,6 @@ func ParseTemplate(template string) (string, error) {
 		return "", err
 	}
 
-	fmt.Fprintf(os.Stderr, "Variables: %#v\n", varMap)
-
 	return parsed, nil
 }
 
@@ -260,18 +260,30 @@ func VariablesToMap(variables []Variable) map[string]any {
 	variableMap := make(map[string]any)
 
 	for _, variable := range variables {
-		if variable.Name == "" { // could be a section or other metadata
+		if variable.Name == "" { // Skip if no name
 			continue
 		}
 
+		// Check for nil value to avoid nil pointer panic
 		if variable.Value == nil {
 			continue
 		}
 
-		// Check if value is a variable slice using reflection
-		fmt.Fprintf(os.Stderr, "Variable: %#v\n\n\n", variable)
-
-		variableMap[variable.Name] = variable.Value
+		valueType := reflect.TypeOf(variable.Value)
+		if valueType != nil && valueType.Kind() == reflect.Slice {
+			// Convert slice of Variables into a nested map
+			nestedMap := make(map[string]any)
+			s := reflect.ValueOf(variable.Value)
+			for i := 0; i < s.Len(); i++ {
+				nestedVar := s.Index(i).Interface().(Variable)
+				if nestedVar.Value != nil {
+					nestedMap[nestedVar.Name] = nestedVar.Value
+				}
+			}
+			variableMap[variable.Name] = nestedMap
+		} else {
+			variableMap[variable.Name] = variable.Value
+		}
 	}
 
 	return variableMap
@@ -347,7 +359,7 @@ func AskForVariables(variables []Variable, path string) error {
 			// Ask for component variables
 			var componentVariables []Variable
 			for _, componentName := range *component.ComponentOrder {
-				componentVariables = append(componentVariables, *component.ComponentVars[componentName])
+				componentVariables = append(componentVariables, component.ComponentVars[componentName])
 			}
 			err = AskForVariables(componentVariables, variable.Name)
 			if err != nil {
