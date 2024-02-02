@@ -1,0 +1,12 @@
+variables:
+  - name: This is a section
+    type: section
+  - name: SomeText
+    type: text
+  - name: Another section
+    type: section
+  - name: AnotherText
+    type: text
+template: |-
+  {{.SomeText}}
+  {{.AnotherText}}

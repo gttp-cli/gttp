@@ -4,6 +4,7 @@ go 1.21.3
 
 require (
 	github.com/MarvinJWendt/testza v0.5.2
+	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/goccy/go-yaml v1.11.3
 	github.com/pterm/pterm v0.12.76
 	github.com/spf13/cobra v1.8.0
@@ -16,7 +17,6 @@ require (
 	atomicgo.dev/schedule v0.1.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
-	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect

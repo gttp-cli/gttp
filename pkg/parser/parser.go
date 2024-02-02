@@ -107,6 +107,8 @@ func AskForInput(variable model.Variable, prefix string) (any, error) {
 			number, err = strconv.ParseFloat(answer, 64)
 			input = number
 		}
+	case "section":
+		pterm.DefaultSection.Println(variable.Name)
 	case "select":
 		var options []string
 		for _, option := range variable.Options {
