@@ -1,7 +1,0 @@
-$Name: text // Username
-$Age: number // User age
-
----
-
-Name: {{ .Name }}
-Age: {{ .Age }}

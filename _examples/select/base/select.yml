@@ -1,0 +1,11 @@
+variables:
+  - name: Animal
+    type: select
+    description: Your favorite animal
+    options:
+      - name: Dog
+        value: dog
+      - name: Cat
+        value: cat
+template: |-
+  Your favorite animal is {{ .Animal }}.

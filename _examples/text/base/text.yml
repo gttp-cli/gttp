@@ -1,0 +1,7 @@
+variables:
+  - name: Name
+    type: text
+    description: Your name
+    default: World
+template: |-
+  Hello, {{ .Name }}!

@@ -1,0 +1,11 @@
+variables:
+  - name: Number
+    type: number
+    description: First number
+    default: 1337
+  - name: Number2
+    type: number
+    description: Second number
+    default: 13.37
+template: |-
+  {{ .Number }} + {{ .Number2 }} = {{ addf .Number .Number2 }}

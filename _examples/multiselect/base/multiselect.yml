@@ -1,0 +1,20 @@
+variables:
+  - name: Order
+    type: multiselect
+    description: Your order
+    options:
+      - name: Pizza
+        value: pizza
+      - name: Burger
+        value: burger
+      - name: Salad
+        value: salad
+    default:
+      - Salad
+template: |-
+  You order: {{ .Order }}
+  
+  Or as a formatted list:
+    {{ range .Order }}
+    - {{ . -}}
+    {{ end }}

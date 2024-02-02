@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // ReadURL sends a GET request to the specified URL and returns the response body as a string.
@@ -23,15 +24,29 @@ func ReadURL(url string) (string, error) {
 		return "", err
 	}
 
-	return string(body), nil
+	str := string(body)
+
+	str = sanitize(str)
+
+	return str, nil
 }
 
 // ReadFile reads the specified file and returns the contents as a string.
 func ReadFile(file string) (string, error) {
-	bytes, err := os.ReadFile(file)
+	b, err := os.ReadFile(file)
 	if err != nil {
 		return "", err
 	}
 
-	return string(bytes), nil
+	str := string(b)
+
+	str = sanitize(str)
+
+	return str, nil
+}
+
+func sanitize(str string) string {
+	str = strings.ReplaceAll(str, "\r\n", "\n")
+
+	return str
 }

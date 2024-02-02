@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/gttp-cli/gttp/pkg/model"
 	"github.com/gttp-cli/gttp/pkg/parser"
 	"github.com/gttp-cli/gttp/pkg/utils"
 	"github.com/spf13/cobra"
@@ -45,7 +46,12 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := parser.ParseTemplate(template)
+		tmpl, err := model.FromYAML(template)
+		if err != nil {
+			return err
+		}
+
+		result, err := parser.ParseTemplate(tmpl)
 		if err != nil {
 			return err
 		}

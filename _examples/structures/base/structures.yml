@@ -1,0 +1,22 @@
+structures:
+  person:
+    - name: Name
+      type: text
+      description: Name of the person
+    - name: Age
+      type: number
+      description: Age of the person
+
+variables:
+  - name: Admin
+    type: person
+  - name: Users
+    type: person[]
+
+template: |-
+  The admin is {{ .Admin.Name }}, and he is {{ .Admin.Age }} years old.
+  
+  Users:
+  {{ range .Users }}
+    {{ .Name }} is {{ .Age }} years old.
+  {{ end }}

@@ -1,0 +1,5 @@
+variables:
+  - name: TextArray
+    type: text[]
+template: |-
+  {{ .TextArray }}

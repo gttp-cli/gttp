@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/gttp-cli/gttp/pkg/parser"
+	"github.com/goccy/go-yaml"
+	"github.com/gttp-cli/gttp/pkg/model"
 	"github.com/gttp-cli/gttp/pkg/utils"
 	"github.com/spf13/cobra"
 )
@@ -48,17 +49,16 @@ var parseCmd = &cobra.Command{
 			return err
 		}
 
-		variables, err := parser.ParseVariables(template)
+		tmpl, err := model.FromYAML(template)
 		if err != nil {
-			return err
+			return errors.New(yaml.FormatError(err, true, true))
 		}
 
-		// Convert variables to JSON
-		json, err := json.MarshalIndent(variables, "", "  ")
+		j, err := tmpl.ToJSON()
 		if err != nil {
 			return err
 		}
-		fmt.Println(string(json))
+		fmt.Println(j)
 
 		return nil
 	},
