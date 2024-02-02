@@ -109,6 +109,8 @@ func AskForInput(variable model.Variable, prefix string) (any, error) {
 		}
 	case "section":
 		pterm.DefaultSection.Println(variable.Name)
+	case "boolean":
+		input, err = pterm.DefaultInteractiveConfirm.Show(prompt)
 	case "select":
 		var options []string
 		for _, option := range variable.Options {
