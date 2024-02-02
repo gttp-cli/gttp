@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"github.com/Masterminds/sprig/v3"
+	"github.com/expr-lang/expr"
 	"github.com/gttp-cli/gttp/pkg/model"
 	"github.com/pterm/pterm"
 	"strconv"
@@ -18,6 +19,25 @@ func ParseTemplate(template model.Template) (string, error) {
 	for _, variable := range template.Variables {
 		var value any
 		var err error
+
+		// Check variable condition; skip if condition is not met
+		if variable.Condition != "" {
+			exp, err := expr.Compile(variable.Condition)
+			if err != nil {
+				return "", err
+			}
+
+			// Evaluate the expression
+			result, err := expr.Run(exp, variableValues)
+			if err != nil {
+				return "", err
+			}
+
+			// Check if the condition is met
+			if result != true {
+				continue
+			}
+		}
 
 		// Check if variable type indicates an array
 		if strings.HasSuffix(variable.Type, "[]") {
