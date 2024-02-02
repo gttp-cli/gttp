@@ -6,6 +6,8 @@ import (
 	"github.com/gttp-cli/gttp/pkg/parser"
 	"github.com/gttp-cli/gttp/pkg/utils"
 	"github.com/spf13/cobra"
+	clip "golang.design/x/clipboard"
+	"os"
 )
 
 func init() {
@@ -14,6 +16,15 @@ func init() {
 
 	// File flag
 	rootCmd.Flags().StringP("file", "f", "", "Fetch template from file")
+
+	// Output flag
+	rootCmd.Flags().StringP("output", "o", "", "Output file")
+
+	// Clipboard flag
+	rootCmd.Flags().BoolP("clipboard", "c", false, "Copy output to clipboard")
+
+	// Silent flag
+	rootCmd.Flags().BoolP("silent", "s", false, "Silent mode")
 }
 
 var rootCmd = &cobra.Command{
@@ -22,6 +33,9 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url, _ := cmd.Flags().GetString("url")
 		file, _ := cmd.Flags().GetString("file")
+		output, _ := cmd.Flags().GetString("output")
+		silent, _ := cmd.Flags().GetBool("silent")
+		clipboard, _ := cmd.Flags().GetBool("clipboard")
 
 		// Do not allow both URL and file flags to be set
 		if url != "" && file != "" {
@@ -56,7 +70,23 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println(result)
+		if output != "" {
+			err := os.WriteFile(output, []byte(result), 0644)
+			if err != nil {
+				return err
+			}
+		}
+
+		if clipboard {
+			clip.Write(clip.FmtText, []byte(result))
+		}
+
+		if !silent {
+			fmt.Println()      // padding
+			fmt.Println("---") // padding
+			fmt.Println()      // padding
+			fmt.Println(result)
+		}
 
 		return nil
 	},
