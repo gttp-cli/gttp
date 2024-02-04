@@ -1,0 +1,29 @@
+name: Sync Docs to Docs Repo
+
+on:
+  push:
+    paths:
+      - 'docs/**'
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gttp repo
+        uses: actions/checkout@v2
+
+      - name: Sync docs directory
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          # Clone using the GH_PAT for authentication
+          git clone https://x-access-token:${GH_PAT}@github.com/gttp-cli/docs.git temp_docs
+          rsync -av --delete docs/ temp_docs/docs/
+          cd temp_docs
+          git add .
+          git commit -m "Update docs from gttp repository"
+          # Ensure the URL uses the GH_PAT for authentication for future operations
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/gttp-cli/docs.git
+          git push origin main
