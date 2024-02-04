@@ -1,6 +1,3 @@
 label: 🚀 Getting Started
 position: 2
-link:
-  type: generated-index
-  description: Getting started with GTTP
-
+collapsed: false
