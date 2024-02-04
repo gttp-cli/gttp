@@ -16,8 +16,8 @@ jobs:
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
+          git config --global user.email "git@marvinjwendt.com"
+          git config --global user.name "MarvinJWendt"
           # Clone using the GH_PAT for authentication
           git clone https://x-access-token:${GH_PAT}@github.com/gttp-cli/docs.git temp_docs
           rsync -av --delete docs/ temp_docs/docs/
