@@ -8,8 +8,9 @@ on:
 jobs:
   sync-docs:
     runs-on: ubuntu-latest
+    if: "${{ github.event.head_commit.message != 'docs: sync docs' }}"
     steps:
-      - name: Checkout gttp repo
+      - name: Checkout repo
         uses: actions/checkout@v2
 
       - name: Sync docs directory
@@ -23,7 +24,7 @@ jobs:
           rsync -av --delete docs/ temp_docs/docs/
           cd temp_docs
           git add .
-          git commit -m "Update docs from gttp repository"
+          git commit -m "docs: sync docs"
           # Ensure the URL uses the GH_PAT for authentication for future operations
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/gttp-cli/docs.git
           git push origin main
