@@ -1,0 +1,15 @@
+variables:
+  - name: AddUser
+    type: boolean
+    description: Do you want to add a user?
+    default: false
+  - name: Username
+    type: text
+    description: Enter the username
+    condition: AddUser
+template: |-
+    {{ if .AddUser }}
+    The username is {{ .Username }}
+    {{ else }}
+    No user was added
+    {{ end }}

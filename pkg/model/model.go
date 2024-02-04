@@ -18,6 +18,8 @@ type Variable struct {
 	IsArray     bool   `json:"array,omitempty"`
 	Description string `json:"description,omitempty"`
 
+	Condition string `json:"condition,omitempty"`
+
 	Value   any `json:"value,omitempty"`
 	Default any `json:"default,omitempty"`
 

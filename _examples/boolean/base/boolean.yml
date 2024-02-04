@@ -1,0 +1,11 @@
+variables:
+  - name: Consent
+    type: boolean
+    description: Do you consent to the terms and conditions?
+    default: false
+template: |-
+    {{ if .Consent }}
+    You have consented to the terms and conditions.
+    {{ else }}
+    You have not consented to the terms and conditions.
+    {{ end }}
