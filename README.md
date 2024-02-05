@@ -42,13 +42,26 @@ The template is then parsed with the Go [text/template](https://pkg.go.dev/text/
 
 ```yaml
 # yaml-language-server: $schema=https://gttp.dev/schema
+
+structures:
+  person:
+    - name: Name
+      type: text
+      description: Name of the person
+    - name: Admin
+      type: boolean
+      description: Is the person an admin
+
 variables:
-  - name: Name
-    type: text
-    description: Your name
-    default: World
+  - name: Users
+    type: person[]
+
 template: |-
-  Hello, {{ .Name }}!
+  You have added the following users:
+  {{ range .Users }}
+  - {{ .Name }} is an admin: {{ .Admin }}
+  {{ end }}
+
 ```
 
 ## Installation
