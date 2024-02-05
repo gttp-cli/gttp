@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/gttp-cli/gttp/pkg/model/template",
+  "$ref": "#/$defs/Template",
+  "$defs": {
+    "Option": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "value": true,
+        "default": true
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name"
+      ]
+    },
+    "Template": {
+      "properties": {
+        "structures": {
+          "additionalProperties": {
+            "items": {
+              "$ref": "#/$defs/Variable"
+            },
+            "type": "array"
+          },
+          "type": "object"
+        },
+        "variables": {
+          "items": {
+            "$ref": "#/$defs/Variable"
+          },
+          "type": "array"
+        },
+        "template": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "template"
+      ]
+    },
+    "Variable": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "array": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "value": true,
+        "default": true,
+        "options": {
+          "items": {
+            "$ref": "#/$defs/Option"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ]
+    }
+  }
+}
