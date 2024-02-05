@@ -9,14 +9,14 @@ import (
 
 type Template struct {
 	Structures map[string][]Variable `json:"structures,omitempty"`
-	Variables  []Variable            `json:"variables,omitempty"`
+	Variables  []Variable            `json:"variables,omitempty" jsonschema:"required"`
 
-	Template string `json:"template"`
+	Template string `json:"template" jsonschema:"required"`
 }
 
 type Variable struct {
-	Name        string `json:"name"`
-	Type        string `json:"type"`
+	Name        string `json:"name" jsonschema:"required"`
+	Type        string `json:"type" jsonschema:"required"`
 	IsArray     bool   `json:"array,omitempty"`
 	Description string `json:"description,omitempty"`
 
