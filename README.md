@@ -24,9 +24,9 @@ Just copy the following command and paste it into your terminal:
 
 | Platform | Command |
 | -------- | ------- |
-| Windows  | <code>iwr instl.sh/gttp-cli/gttp/windows | iex<code>      |
-| macOS    | <code>curl -sSL instl.sh/gttp-cli/gttp/macos | bash<code> |
-| Linux    | <code>curl -sSL instl.sh/gttp-cli/gttp/linux | bash<code> |
+| Windows  | `iwr instl.sh/gttp-cli/gttp/windows \| iex`      |
+| macOS    | `curl -sSL instl.sh/gttp-cli/gttp/macos \| bash` |
+| Linux    | `curl -sSL instl.sh/gttp-cli/gttp/linux \| bash` |
 
 > [!TIP]
 > If you want to take a look at the script before running it, you can open the instl.sh URL in your browser.
