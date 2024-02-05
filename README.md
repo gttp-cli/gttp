@@ -38,14 +38,6 @@
 
 There are multiple ways to install `gttp` on your system.
 
-### Install using Go
-
-If you have [Go](https://go.dev) installed, you can install `gttp` using the following command:
-
-```bash
-go install github.com/gttp-cli/gttp@latest
-```
-
 ### Install Using Web Installer
 
 You can install `gttp` using [instl](https://instl.sh).
@@ -61,6 +53,15 @@ Just copy the following command and paste it into your terminal:
 
 > [!TIP]
 > If you want to take a look at the script before running it, you can open the instl.sh URL in your browser.
+
+
+### Install using Go
+
+If you have [Go](https://go.dev) installed, you can install `gttp` using the following command:
+
+```bash
+go install github.com/gttp-cli/gttp@latest
+```
 
 ## Docs
 
