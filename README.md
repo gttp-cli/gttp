@@ -36,6 +36,10 @@
 
 ## Introduction
 
+GTTP lets you define your text templates using YAMl.  
+When you execute a template file, GTTP will interactively ask you to fill out the defined variables.  
+The template is then parsed with the Go [text/template](https://pkg.go.dev/text/template) syntax.
+
 ```yaml
 variables:
   - name: Name
