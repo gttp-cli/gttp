@@ -1,0 +1,9 @@
+services:
+  gttp-api:
+    # image: ghcr.io/gttp-cli/gttp
+    build:
+      context: .
+      target: final
+    command: "serve"
+    ports:
+      - 8080:8080
