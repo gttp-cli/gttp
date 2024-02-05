@@ -1,0 +1,7 @@
+variables:
+  - name: Text
+    type: text
+    regex: ^[a-z]+$
+    value: "123"
+template: |-
+  {{ .Text }}

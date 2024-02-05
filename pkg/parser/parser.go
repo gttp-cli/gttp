@@ -15,6 +15,16 @@ import (
 func ParseTemplate(template model.Template) (string, error) {
 	variableValues := make(map[string]interface{})
 
+	// Validate the template
+	validationErrors := template.Validate()
+	if validationErrors != nil {
+		var errors []string
+		for _, err := range validationErrors {
+			errors = append(errors, fmt.Sprintf("- %s", err))
+		}
+		return "", fmt.Errorf("template validation failed:\n\n%s", strings.Join(errors, "\n"))
+	}
+
 	// Parse and fill in the variables
 	for _, variable := range template.Variables {
 		var value any

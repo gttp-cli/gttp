@@ -1,0 +1,13 @@
+variables:
+  - name: Num1
+    type: number
+    description: The first number
+    min: 0
+    max: 100
+  - name: Num2
+    type: number
+    description: The second number
+    min: -5
+    max: 5
+template: |-
+    The first number is {{ .Num1 }} and the second number is {{ .Num2 }}.

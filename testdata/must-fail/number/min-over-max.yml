@@ -1,0 +1,7 @@
+variables:
+  - name: Number
+    type: number
+    min: 10
+    max: 5
+template: |-
+  {{ .Number }}
