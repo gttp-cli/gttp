@@ -64,6 +64,18 @@ template: |-
 
 ```
 
+Try the demo:
+
+```bash
+gttp -u gttp.dev/demo.yml
+```
+
+Or with Docker:
+
+```bash
+docker run -it --rm ghcr.io/gttp-cli/gttp:main -u gttp.dev/demo.yml
+```
+
 ## Installation
 
 There are multiple ways to install `gttp` on your system.
