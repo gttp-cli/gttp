@@ -13,7 +13,7 @@ func init() {
 	rootCmd.AddCommand(serveCmd)
 
 	// Add address flag
-	serveCmd.Flags().StringP("address", "a", "localhost:8080", "Address to listen on")
+	serveCmd.Flags().StringP("address", "a", "0.0.0.0:8080", "Address to listen on")
 }
 
 var serveCmd = &cobra.Command{
