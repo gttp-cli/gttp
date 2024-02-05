@@ -1,4 +1,8 @@
-# GTTP CLI
+<h1>GTTP CLI</h1>
+<img alt="GitHub Release" src="https://img.shields.io/github/v/release/gttp-cli/gttp?style=flat-square">
+<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/gttp-cli/gttp/build?style=flat-square">
+<img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/gttp-cli/gttp/total?style=flat-square">
+
 
 GTTP is an interactive Go Text Template Parser. It allows you to write text templates, that you can interactively fill
 out.
@@ -32,4 +36,6 @@ Just copy the following command and paste it into your terminal:
 > If you want to take a look at the script before running it, you can open the instl.sh URL in your browser.
 
 ## Docs
+
+
 
