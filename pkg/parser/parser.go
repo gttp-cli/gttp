@@ -11,10 +11,8 @@ import (
 	"text/template"
 )
 
-// ParseTemplate parses the template and returns the filled template string.
-func ParseTemplate(template model.Template) (string, error) {
-	variableValues := make(map[string]interface{})
-
+// ParseTemplate parses the template and updates its variables with filled values.
+func ParseTemplate(template model.Template) (model.Template, error) {
 	// Validate the template
 	validationErrors := template.Validate()
 	if validationErrors != nil {
@@ -22,83 +20,89 @@ func ParseTemplate(template model.Template) (string, error) {
 		for _, err := range validationErrors {
 			errors = append(errors, fmt.Sprintf("- %s", err))
 		}
-		return "", fmt.Errorf("template validation failed:\n\n%s", strings.Join(errors, "\n"))
+		return template, fmt.Errorf("template validation failed:\n\n%s", strings.Join(errors, "\n"))
 	}
 
-	// Parse and fill in the variables
-	for _, variable := range template.Variables {
-		var value any
+	for i, variable := range template.Variables {
+		if variable.Value != nil {
+			continue // Skip variables that already have a value set.
+		}
+
 		var err error
-
-		// Check variable condition; skip if condition is not met
-		if variable.Condition != "" {
-			exp, err := expr.Compile(variable.Condition)
-			if err != nil {
-				return "", err
-			}
-
-			// Evaluate the expression
-			result, err := expr.Run(exp, variableValues)
-			if err != nil {
-				return "", err
-			}
-
-			// Check if the condition is met
-			if result != true {
-				continue
-			}
+		template.Variables[i].Value, err = processVariable(variable, template)
+		if err != nil {
+			return template, err
 		}
-
-		// Check if variable type indicates an array
-		if strings.HasSuffix(variable.Type, "[]") {
-			variable.IsArray = true
-			variable.Type = strings.TrimSuffix(variable.Type, "[]")
-		}
-
-		// Check if the variable is an array
-		if variable.IsArray {
-			var values []interface{}
-			// Continue to ask for input until the user decides not to add more
-			for {
-				if _, ok := template.Structures[variable.Type]; ok {
-					// Custom type within an array
-					val, err := ParseCustomType(variable, template.Structures[variable.Type])
-					if err != nil {
-						return "", err
-					}
-					values = append(values, val)
-				} else {
-					// Base type within an array
-					val, err := AskForInput(variable, "")
-					if err != nil {
-						return "", err
-					}
-					values = append(values, val)
-				}
-
-				if !AskToContinue() {
-					break
-				}
-			}
-			value = values
-		} else {
-			if _, ok := template.Structures[variable.Type]; ok {
-				// Single custom type
-				value, err = ParseCustomType(variable, template.Structures[variable.Type])
-			} else {
-				// Single base type
-				value, err = AskForInput(variable, "")
-			}
-			if err != nil {
-				return "", err
-			}
-		}
-
-		variableValues[variable.Name] = value
 	}
 
-	// Use ParseGoTextTemplate to parse the Go text template
-	return ParseGoTextTemplate(template.Template, variableValues)
+	return template, nil
+}
+
+func processVariable(variable model.Variable, template model.Template) (any, error) {
+	if variable.Condition != "" && !evaluateCondition(variable.Condition, template) {
+		return nil, nil // Condition not met, skip variable.
+	}
+
+	if strings.HasSuffix(variable.Type, "[]") {
+		variable.IsArray = true
+		variable.Type = strings.TrimSuffix(variable.Type, "[]")
+	}
+
+	if variable.IsArray {
+		return processArrayVariable(variable, template)
+	}
+
+	return processSingleVariable(variable, template)
+}
+
+func evaluateCondition(condition string, template model.Template) bool {
+	exp, err := expr.Compile(condition)
+	if err != nil {
+		return false
+	}
+
+	variableValues := extractVariableValues(template)
+	result, err := expr.Run(exp, variableValues)
+	if err != nil {
+		return false
+	}
+
+	return result == true
+}
+
+func processArrayVariable(variable model.Variable, template model.Template) ([]interface{}, error) {
+	var values []interface{}
+	for {
+		val, err := askForVariableValue(variable, template)
+		if err != nil {
+			return nil, err
+		}
+
+		values = append(values, val)
+		if !AskToContinue() {
+			break
+		}
+	}
+	return values, nil
+}
+
+func processSingleVariable(variable model.Variable, template model.Template) (interface{}, error) {
+	return askForVariableValue(variable, template)
+}
+
+func askForVariableValue(variable model.Variable, template model.Template) (any, error) {
+	if structVars, ok := template.Structures[variable.Type]; ok {
+		return ParseCustomType(variable, structVars)
+	}
+	return AskForInput(variable, "")
+}
+
+func extractVariableValues(template model.Template) map[string]interface{} {
+	values := make(map[string]interface{})
+	for _, variable := range template.Variables {
+		values[variable.Name] = variable.Value
+	}
+	return values
 }
 
 func AskToContinue() bool {
@@ -223,4 +227,9 @@ func ParseGoTextTemplate(templateContent string, variables map[string]any) (stri
 	}
 
 	return parsed.String(), nil
+}
+
+func RenderTemplate(template model.Template) (string, error) {
+	variableValues := extractVariableValues(template)
+	return ParseGoTextTemplate(template.Template, variableValues)
 }

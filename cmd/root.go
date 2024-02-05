@@ -5,6 +5,7 @@ import (
 	"github.com/gttp-cli/gttp/pkg/model"
 	"github.com/gttp-cli/gttp/pkg/parser"
 	"github.com/gttp-cli/gttp/pkg/utils"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	clip "golang.design/x/clipboard"
 	"os"
@@ -16,6 +17,7 @@ func init() {
 	rootCmd.Flags().StringP("output", "o", "", "Output file")
 	rootCmd.Flags().BoolP("clipboard", "c", false, "Copy output to clipboard")
 	rootCmd.Flags().BoolP("silent", "s", false, "Silent mode")
+	rootCmd.Flags().BoolP("debug", "d", false, "Print debug information")
 }
 
 var rootCmd = &cobra.Command{
@@ -27,6 +29,7 @@ var rootCmd = &cobra.Command{
 		output, _ := cmd.Flags().GetString("output")
 		silent, _ := cmd.Flags().GetBool("silent")
 		clipboard, _ := cmd.Flags().GetBool("clipboard")
+		debug, _ := cmd.Flags().GetBool("debug")
 
 		// Do not allow both URL and file flags to be set
 		if url != "" && file != "" {
@@ -56,7 +59,12 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := parser.ParseTemplate(tmpl)
+		tmpl, err = parser.ParseTemplate(tmpl)
+		if err != nil {
+			return err
+		}
+
+		result, err := parser.RenderTemplate(tmpl)
 		if err != nil {
 			return err
 		}
@@ -77,6 +85,12 @@ var rootCmd = &cobra.Command{
 			fmt.Println("---") // padding
 			fmt.Println()      // padding
 			fmt.Println(result)
+		}
+
+		if debug {
+			pterm.DefaultSection.Println("Debug Information")
+			pterm.DefaultSection.WithLevel(2).Println("Template")
+			pterm.Printfln("%#v", tmpl)
 		}
 
 		return nil

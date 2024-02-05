@@ -12,10 +12,7 @@ import (
 func init() {
 	rootCmd.AddCommand(parseCmd)
 
-	// URL flag
 	parseCmd.Flags().StringP("url", "u", "", "Fetch template from URL")
-
-	// File flag
 	parseCmd.Flags().StringP("file", "f", "", "Fetch template from file")
 }
 

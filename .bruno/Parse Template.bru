@@ -1,0 +1,17 @@
+meta {
+  name: Parse Template
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8080/api/v1/parse
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "template": "variables:\n  - name: Text\n    type: text\n    regex: ^[a-z]+$\n    value: abc\ntemplate: |-\n  \{{ .Text }}"
+  }
+}
