@@ -1,0 +1,54 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test Go Project
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '^1.18' # Set this to your Go version
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./...
+
+      - name: Generate schema
+        run: go run . schema -o schema.json
+
+      - name: Commit schema.json
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add schema.json
+          # Check if there are any changes
+          git diff --staged --exit-code || {
+            # Only proceed if the diff command exits with a non-zero exit code, indicating changes
+            git commit -m "Update schema.json"
+            git push
+          } || echo "No changes to schema.json, skipping commit and push."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
