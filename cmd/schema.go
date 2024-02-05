@@ -23,7 +23,11 @@ var schemaCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		outputPath, _ := cmd.Flags().GetString("output")
 
-		schema := jsonschema.Reflect(&model.Template{})
+		r := new(jsonschema.Reflector)
+		if err := r.AddGoComments("github.com/gttp-cli/gttp", "./"); err != nil {
+			// deal with error
+		}
+		schema := r.Reflect(&model.Template{})
 
 		j, err := schema.MarshalJSON()
 		if err != nil {

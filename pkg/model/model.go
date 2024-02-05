@@ -8,39 +8,62 @@ import (
 )
 
 type Template struct {
+	// Structures define custom types.
+	// They can be used as reusable components, consiting of multiple variables.
 	Structures map[string][]Variable `json:"structures,omitempty"`
-	Variables  []Variable            `json:"variables,omitempty" jsonschema:"required"`
 
-	Template string `json:"template" jsonschema:"required"`
+	// Variables define the input variables for the template.
+	// They can be used in the template content and in conditions.
+	Variables []Variable `json:"variables"`
+
+	// Template defines the content of the template.
+	Template string `json:"template"`
 }
 
 type Variable struct {
-	Name        string `json:"name" jsonschema:"required"`
-	Type        string `json:"type" jsonschema:"required"`
-	IsArray     bool   `json:"array,omitempty"`
+	// Name is the name of the variable.
+	Name string `json:"name"`
+	// Type is the type of the variable.
+	Type string `json:"type"`
+	// IsArray indicates if the variable is an array.
+	// Can also be indicated by the type, e.g. "string[]".
+	IsArray bool `json:"array,omitempty"`
+	// Description is a description of the variable.
 	Description string `json:"description,omitempty"`
 
+	// Condition is a condition that must be met for the variable to be used.
+	// Conditions are evaluated using expr-lang expressions (see: https://expr-lang.org/).
 	Condition string `json:"condition,omitempty"`
 
-	Value   any `json:"value,omitempty"`
+	// Value is the value of the variable.
+	// If the value is predefined in the template, the user will not be asked for input.
+	Value any `json:"value,omitempty"`
+	// Default is the default value of the variable, if the user does not provide a value.
 	Default any `json:"default,omitempty"`
 
-	// Number validation
+	// Min is the minimum value of the variable.
+	// Only applicable to number types.
 	Min float64 `json:"min,omitempty"`
+	// Max is the maximum value of the variable.
+	// Only applicable to number types.
 	Max float64 `json:"max,omitempty"`
 
-	// String validation
+	// Regex is a regular expression that the value must match.
+	// Only applicable to text types.
 	Regex string `json:"regex,omitempty"`
 
+	// Options are the available options for select and multiselect types.
 	Options []Option `json:"options,omitempty"`
 }
 
 type Option struct {
-	Name        string `json:"name" jsonschema:"required"`
-	Description string `json:"description,omitempty"`
+	// Name is the name of the option.
+	// If no value is provided, the name will be used as the value.
+	Name string `json:"name"`
 
-	Value   any `json:"value,omitempty"`
-	Default any `json:"default,omitempty"`
+	// Value is the value of the option.
+	// If no value is provided, the name will be used as the value.
+	Value any `json:"value,omitempty"`
 }
 
 func (t Template) ToJSON() (string, error) {

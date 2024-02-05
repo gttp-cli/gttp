@@ -6,13 +6,12 @@
     "Option": {
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name is the name of the option.\nIf no value is provided, the name will be used as the value."
         },
-        "description": {
-          "type": "string"
-        },
-        "value": true,
-        "default": true
+        "value": {
+          "description": "Value is the value of the option.\nIf no value is provided, the name will be used as the value."
+        }
       },
       "additionalProperties": false,
       "type": "object",
@@ -29,16 +28,19 @@
             },
             "type": "array"
           },
-          "type": "object"
+          "type": "object",
+          "description": "Structures define custom types.\nThey can be used as reusable components, consiting of multiple variables."
         },
         "variables": {
           "items": {
             "$ref": "#/$defs/Variable"
           },
-          "type": "array"
+          "type": "array",
+          "description": "Variables define the input variables for the template.\nThey can be used in the template content and in conditions."
         },
         "template": {
-          "type": "string"
+          "type": "string",
+          "description": "Template defines the content of the template."
         }
       },
       "additionalProperties": false,
@@ -51,36 +53,49 @@
     "Variable": {
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name is the name of the variable."
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "Type is the type of the variable."
         },
         "array": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "IsArray indicates if the variable is an array.\nCan also be indicated by the type, e.g. \"string[]\"."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Description is a description of the variable."
         },
         "condition": {
-          "type": "string"
+          "type": "string",
+          "description": "Condition is a condition that must be met for the variable to be used.\nConditions are evaluated using expr-lang expressions (see: https://expr-lang.org/)."
         },
-        "value": true,
-        "default": true,
+        "value": {
+          "description": "Value is the value of the variable.\nIf the value is predefined in the template, the user will not be asked for input."
+        },
+        "default": {
+          "description": "Default is the default value of the variable, if the user does not provide a value."
+        },
         "min": {
-          "type": "number"
+          "type": "number",
+          "description": "Min is the minimum value of the variable.\nOnly applicable to number types."
         },
         "max": {
-          "type": "number"
+          "type": "number",
+          "description": "Max is the maximum value of the variable.\nOnly applicable to number types."
         },
         "regex": {
-          "type": "string"
+          "type": "string",
+          "description": "Regex is a regular expression that the value must match.\nOnly applicable to text types."
         },
         "options": {
           "items": {
             "$ref": "#/$defs/Option"
           },
-          "type": "array"
+          "type": "array",
+          "description": "Options are the available options for select and multiselect types."
         }
       },
       "additionalProperties": false,
