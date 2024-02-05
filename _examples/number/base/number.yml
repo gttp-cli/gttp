@@ -1,3 +1,4 @@
+# $schema: https://gttp.dev/schema
 variables:
   - name: Number
     type: number

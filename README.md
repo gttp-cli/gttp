@@ -41,6 +41,7 @@ When you execute a template file, GTTP will interactively ask you to fill out th
 The template is then parsed with the Go [text/template](https://pkg.go.dev/text/template) syntax.
 
 ```yaml
+# $schema: https://gttp.dev/schema
 variables:
   - name: Name
     type: text
