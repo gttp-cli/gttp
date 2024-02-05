@@ -34,6 +34,18 @@
 
 </p>
 
+## Introduction
+
+```yaml
+variables:
+  - name: Name
+    type: text
+    description: Your name
+    default: World
+template: |-
+  Hello, {{ .Name }}!
+```
+
 ## Installation
 
 There are multiple ways to install `gttp` on your system.
