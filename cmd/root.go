@@ -11,19 +11,10 @@ import (
 )
 
 func init() {
-	// URL flag
 	rootCmd.Flags().StringP("url", "u", "", "Fetch template from URL")
-
-	// File flag
 	rootCmd.Flags().StringP("file", "f", "", "Fetch template from file")
-
-	// Output flag
 	rootCmd.Flags().StringP("output", "o", "", "Output file")
-
-	// Clipboard flag
 	rootCmd.Flags().BoolP("clipboard", "c", false, "Copy output to clipboard")
-
-	// Silent flag
 	rootCmd.Flags().BoolP("silent", "s", false, "Silent mode")
 }
 

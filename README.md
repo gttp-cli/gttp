@@ -1,2 +1,8 @@
-# gttp
-Go Text Template Parser - Create templates for emails, reports, PR descriptions, etc. and fill them out interactively!
+# GTTP CLI
+
+GTTP is an interactive Go Text Template Parser. It allows you to write text templates, that you can interactively fill out.
+
+## Installation
+
+## Docs
+
