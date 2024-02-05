@@ -22,11 +22,11 @@ Using instl is the simplest way to install `gttp` on your system.
 
 Just copy the following command and paste it into your terminal:
 
-| Operating System | Command                                      |
-|------------------|----------------------------------------------|
-| macOS            | <code>curl -sSL instl.sh/gttp-cli/gttp/macos | bash</code>|
-| Windows          | <code>iwr instl.sh/gttp-cli/gttp/windows     | iex</code>|
-| Linux            | <code>curl -sSL instl.sh/gttp-cli/gttp/linux | bash</code>|
+| Platform | Command |
+| -------- | ------- |
+| Windows  | <code>iwr instl.sh/gttp-cli/gttp/windows | iex<code>      |
+| macOS    | <code>curl -sSL instl.sh/gttp-cli/gttp/macos | bash<code> |
+| Linux    | <code>curl -sSL instl.sh/gttp-cli/gttp/linux | bash<code> |
 
 > [!TIP]
 > If you want to take a look at the script before running it, you can open the instl.sh URL in your browser.
