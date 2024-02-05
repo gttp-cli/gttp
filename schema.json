@@ -66,6 +66,15 @@
         },
         "value": true,
         "default": true,
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "regex": {
+          "type": "string"
+        },
         "options": {
           "items": {
             "$ref": "#/$defs/Option"
