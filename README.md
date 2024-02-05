@@ -1,12 +1,38 @@
-<h1>GTTP CLI</h1>
-<p>
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/gttp-cli/gttp?style=flat-square">
-    <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/gttp-cli/gttp/total?style=flat-square">
-    <img alt="Build Status" src="https://img.shields.io/github/actions/workflow/status/gttp-cli/gttp/build?style=flat-square">
-</p>
+<h1 align="center">💻 GTTP | Go Text Template Parser</h1>
+<p align="center">A modern CLI to create and fill out reusable text templates</p>
 
-GTTP is an interactive Go Text Template Parser. It allows you to write text templates, that you can interactively fill
-out.
+<p align="center">
+
+<a href="https://github.com/gttp-cli/gttp/releases" style="text-decoration: none">
+    <img src="https://img.shields.io/github/v/release/gttp-cli/gttp?style=flat-square" alt="Latest Release">
+</a>
+
+<a href="https://github.com/gttp-cli/gttp/stargazers" style="text-decoration: none">
+    <img src="https://img.shields.io/github/stars/gttp-cli/gttp.svg?style=flat-square" alt="Stars">
+</a>
+
+<a href="https://github.com/gttp-cli/gttp/fork" style="text-decoration: none">
+    <img src="https://img.shields.io/github/forks/gttp-cli/gttp.svg?style=flat-square" alt="Forks">
+</a>
+
+<a href="https://opensource.org/licenses/MIT" style="text-decoration: none">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT">
+</a>
+
+<br/>
+
+<a href="https://github.com/gttp-cli/gttp/releases" style="text-decoration: none">
+    <img src="https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-informational?style=for-the-badge" alt="Downloads">
+</a>
+
+ <a href="https://marvin.ws/twitter">
+    <img src="https://img.shields.io/badge/Twitter-%40MarvinJWendt-1DA1F2?logo=twitter&style=for-the-badge"/>
+</a>
+
+<br/>
+<br/>
+
+</p>
 
 ## Installation
 
