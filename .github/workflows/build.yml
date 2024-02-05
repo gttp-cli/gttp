@@ -49,7 +49,7 @@ jobs:
           # Check if there are any changes
           git diff --staged --exit-code || {
             # Only proceed if the diff command exits with a non-zero exit code, indicating changes
-            git commit -m "Update schema.json"
+            git commit -m "chore: updated schema.json"
             git push
           } || echo "No changes to schema.json, skipping commit and push."
         env:
