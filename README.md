@@ -81,5 +81,5 @@ go install github.com/gttp-cli/gttp@latest
 
 ## Docs
 
-
+Docs are available at: https://docs.gttp.dev
 
