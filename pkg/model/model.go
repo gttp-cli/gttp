@@ -36,7 +36,7 @@ type Variable struct {
 }
 
 type Option struct {
-	Name        string `json:"name"`
+	Name        string `json:"name" jsonschema:"required"`
 	Description string `json:"description,omitempty"`
 
 	Value   any `json:"value,omitempty"`
