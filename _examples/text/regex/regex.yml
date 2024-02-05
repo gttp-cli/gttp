@@ -1,0 +1,7 @@
+variables:
+  - name: Text
+    type: text
+    regex: ^[a-z]+$ # only allow lowercase letters
+    description: A string of lowercase letters
+template: |-
+  {{ .Text }}

@@ -6,6 +6,7 @@ import (
 	"github.com/gttp-cli/gttp/pkg/model"
 	"github.com/gttp-cli/gttp/pkg/parser"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func init() {
@@ -47,7 +48,15 @@ var serveCmd = &cobra.Command{
 				})
 			}
 
-			tmpl, err := model.FromYAML(body.Template)
+			var tmpl model.Template
+			var err error
+
+			if strings.HasPrefix(body.Template, "{") {
+				tmpl, err = model.FromJSON(body.Template)
+			} else {
+				tmpl, err = model.FromYAML(body.Template)
+			}
+
 			if err != nil {
 				return c.Status(400).JSON(map[string]string{
 					"error": err.Error(),
