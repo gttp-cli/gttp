@@ -1,0 +1,17 @@
+meta {
+  name: Parse Template with Structures
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{ API_URL }}/parse
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "template": "structures:\n  person:\n  - name: Name\n    type: text\n    description: Name of the person\n  - name: Admin\n    type: boolean\n    description: Is the person an admin\nvariables:\n- name: Users\n  type: person[]\n  value:\n  - Admin: true\n    Name: Marvin\n  - Admin: false\n    Name: Test\n  - Admin: false\n    Name: Test2\n  - Admin: true\n    Name: Test3\ntemplate: \"You have added the following users:\n\{{ range .Users }}\n- \{{ .Name }} is an admin: \{{ .Admin }}\n\{{ end }}\""
+  }
+}

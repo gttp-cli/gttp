@@ -91,6 +91,12 @@ var rootCmd = &cobra.Command{
 			pterm.DefaultSection.Println("Debug Information")
 			pterm.DefaultSection.WithLevel(2).Println("Template")
 			pterm.Printfln("%#v", tmpl)
+			pterm.DefaultSection.WithLevel(2).Println("Parsed Template YAML")
+			y, err := tmpl.ToYAML()
+			if err != nil {
+				return err
+			}
+			pterm.Printfln("%s", y)
 		}
 
 		return nil
