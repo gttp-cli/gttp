@@ -85,16 +85,16 @@ structures:
       description: Lastname of the person
 
 variables:
-    - name: UserA
-      type: person
-      description: A person
-    - name: UserB
-      type: person
-      description: Another person
+  - name: UserA
+    type: person
+    description: A person
+  - name: UserB
+    type: person
+    description: Another person
 
 template: |-
-    Hello, {{ .UserA.Name }} {{ .UserA.Lastname }}!
-    Hello, {{ .UserB.Name }} {{ .UserB.Lastname }}!
+  Hello, {{ .UserA.Name }} {{ .UserA.Lastname }}!
+  Hello, {{ .UserB.Name }} {{ .UserB.Lastname }}!
 ```
 
 When executing the template, GTTP will interactively ask you to fill out the defined variables:
@@ -107,7 +107,7 @@ When executing the template, GTTP will interactively ask you to fill out the def
 ```
 
 When all variables are filled out, GTTP will parse the template to:
-    
+
 ```
 Hello, John Doe!
 Hello, Jane Doe!

@@ -25,7 +25,6 @@ template: |-
   {{ range .Users }}
   - {{ .Name }} is an admin: {{ .Admin }}
   {{ end }}
-
 ```
 
 This is a simple example of a GTTP template.  
