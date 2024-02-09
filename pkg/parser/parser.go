@@ -129,7 +129,7 @@ func AskForInput(variable model.Variable, prefix string) (any, error) {
 
 	switch variable.Type {
 	case "text":
-		input, err = pterm.DefaultInteractiveTextInput.Show(prompt)
+		input, err = pterm.DefaultInteractiveTextInput.WithMultiLine(variable.Multiline).Show(prompt)
 		if input == "" {
 			input = nil
 		}

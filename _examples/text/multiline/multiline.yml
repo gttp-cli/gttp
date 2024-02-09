@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://gttp.dev/schema
+variables:
+  - name: Description
+    type: text
+    multiline: true
+template: |-
+  Your description: 
+  {{ .Description }}

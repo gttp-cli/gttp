@@ -28,6 +28,9 @@ type Variable struct {
 	// IsArray indicates if the variable is an array.
 	// Can also be indicated by the type, e.g. "string[]".
 	IsArray bool `json:"array,omitempty"`
+	// Multiline indicates if the variable is a multiline string.
+	// Only applicable to text types.
+	Multiline bool `json:"multiline,omitempty"`
 	// Description is a description of the variable.
 	Description string `json:"description,omitempty"`
 
@@ -110,6 +113,27 @@ func (v Variable) Validate() []error {
 	// Check that type is set
 	if v.Type == "" {
 		errors = append(errors, newValidationError(v, "type is required"))
+	}
+
+	// Min and max are only applicable to number types
+	if v.Min != 0 || v.Max != 0 {
+		if v.Type != "number" {
+			errors = append(errors, newValidationError(v, "min and max are only applicable to number types"))
+		}
+	}
+
+	// Regex is only applicable to text types
+	if v.Regex != "" {
+		if v.Type != "text" {
+			errors = append(errors, newValidationError(v, "regex is only applicable to text types"))
+		}
+	}
+
+	// Options are only applicable to select and multiselect types
+	if len(v.Options) > 0 {
+		if v.Type != "select" && v.Type != "multiselect" {
+			errors = append(errors, newValidationError(v, "options are only applicable to select and multiselect types"))
+		}
 	}
 
 	// Specific type validations
