@@ -129,6 +129,13 @@ func (v Variable) Validate() []error {
 		}
 	}
 
+	// Multiline is only applicable to text types
+	if v.Multiline {
+		if v.Type != "text" {
+			errors = append(errors, newValidationError(v, "multiline is only applicable to text types"))
+		}
+	}
+
 	// Options are only applicable to select and multiselect types
 	if len(v.Options) > 0 {
 		if v.Type != "select" && v.Type != "multiselect" {
