@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# GTTP Template Syntax
+# Template Syntax
 
 GTTP uses YAML to define the structure of your template:
 
