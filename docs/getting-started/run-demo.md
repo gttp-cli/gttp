@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+id: demo
 ---
 
 # 🚀 Run Demo Template
