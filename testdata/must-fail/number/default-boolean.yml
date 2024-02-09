@@ -1,0 +1,7 @@
+variables:
+  - name: Number
+    type: number
+    description: First number
+    default: true
+template: |-
+  {{ .Number }}
