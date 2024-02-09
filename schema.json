@@ -64,6 +64,10 @@
           "type": "boolean",
           "description": "IsArray indicates if the variable is an array.\nCan also be indicated by the type, e.g. \"string[]\"."
         },
+        "multiline": {
+          "type": "boolean",
+          "description": "Multiline indicates if the variable is a multiline string.\nOnly applicable to text types."
+        },
         "description": {
           "type": "string",
           "description": "Description is a description of the variable."
