@@ -40,6 +40,14 @@ GTTP lets you define your text templates using YAMl.
 When you execute a template file, GTTP will interactively ask you to fill out the defined variables.  
 The template is then parsed with the Go [text/template](https://pkg.go.dev/text/template) syntax.
 
+Use-cases for GTTP include:
+- Generating configuration files
+- Creating README files
+- Writing documentation
+- E-Mail templates
+- Ticket templates
+- and many more...
+
 ```yaml
 # yaml-language-server: $schema=https://gttp.dev/schema
 
